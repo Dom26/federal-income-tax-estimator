@@ -6,11 +6,21 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Federal Tax Estimator</title>
     <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <script defer src="taxes.js"></script>
   </head>
   <body>
     <h1>Federal Tax Estimator</h1>
     <main>
-    
+      <div id="inputArea">
+        <label for="income">Enter Annual Salary:</label>
+        <input type="number" id="userInput" name="income" />
+        <button type="submit">Submit</button>
+      </div>
     </main>
   </body>
 
