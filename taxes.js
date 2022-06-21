@@ -9,30 +9,39 @@ let button = document.getElementById("submitBtn")
 // Add event listener to button
 button.addEventListener('click',getData)
 
-// Function to get the data the user entered in the input box
-function getData(){
-    let userInput = document.getElementById("userInput").value
-    //alert(userInput)
+// Function to  calculate the total Taxes owed
+function calculateTaxes(annualIncome,maxIncomeArr){
     // create a while loop that stops whenever the current maxIncome[i] > userInput income
     // for every loop iteration add the total amount of taxes to be paid
     // At the end add the final amount of taxes to added
+    if(annualIncome < maxIncomeArr[0]){
+        return annualIncome * taxRates[0]
+    }
     let i = 0
     let totalTaxes = 0
-    let userIncome = Number(userInput)
-    while((userIncome > maxIncomes[i]) && i < maxIncomes.length){
+    while((annualIncome > maxIncomeArr[i]) && i < maxIncomeArr.length){
         if(i == 0){
-            totalTaxes += maxIncomes[i] * taxRates[i]
+            totalTaxes += maxIncomeArr[i] * taxRates[i]
         }
         else{
-            totalTaxes += (maxIncomes[i] - maxIncomes[i-1]) * taxRates[i]
+            totalTaxes += (maxIncomeArr[i] - maxIncomeArr[i-1]) * taxRates[i]
         }
         i++
     }
     if(i == 0){
-        totalTaxes += userIncome * taxRates[i]
+        totalTaxes += annualIncome * taxRates[i]
     }
     else{
-        totalTaxes += (userIncome - maxIncomes[i-1]) * taxRates[i]
+        totalTaxes += (annualIncome - maxIncomeArr[i-1]) * taxRates[i]
     }
-    alert(`Gross Income: ${userIncome}\nTaxes owed: ${totalTaxes}\nNet Income: ${userIncome-totalTaxes}`)
+    return totalTaxes
+}
+// Function to get the data the user entered in the input box
+function getData(){
+    let userInput = document.getElementById("userInput").value
+    
+    let userIncome = Number(userInput)
+    let taxesOwed = calculateTaxes(userIncome,maxIncomes)
+    
+    alert(`Gross Income: ${userIncome}\nTaxes owed: ${taxesOwed}\nNet Income: ${userIncome-taxesOwed}`)
 }
