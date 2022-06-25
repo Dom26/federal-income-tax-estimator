@@ -17,8 +17,13 @@
     <h1>Federal Tax Estimator</h1>
     <main id="main">
       <div id="inputArea">
-        <label for="income">Enter Annual Salary:</label>
+        <label for="income" id="userMessage">Enter Annual Salary:</label>
         <input type="number" id="userInput" name="income" />
+        <select name="incomeType" id="incomeType">
+          <option value="annual" id="annualIncome">Annually</option>
+          <option value="hourly" id="hourlyIncome">Hourly</option>
+        </select>
+        <br />
         <button type="submit" id="submitBtn">Submit</button>
       </div>
     </main>

@@ -7,8 +7,23 @@ let mainElement = document.getElementById("main")
 //let userInput = document.getElementById("userInput").value
 let button = document.getElementById("submitBtn")
 
+let incomeType = document.getElementById("incomeType")
+
+// Add event listener to select tag
+incomeType.addEventListener('change',changeIncomeType)
+
 // Add event listener to button
 button.addEventListener('click',getData)
+
+function changeIncomeType(){
+    let message = document.getElementById("userMessage")
+    if(incomeType.value === "annual"){
+        message.innerHTML = "Enter Annual Salary"
+    }
+    else{
+        message.innerHTML = "Enter Hourly Rate"
+    }
+}
 
 // Function to  calculate the total Taxes owed
 function calculateTaxes(annualIncome,maxIncomeArr){
@@ -77,14 +92,22 @@ function displayDataToHTML(grossIncome,hourlyRate,taxOwed){
 // Function to get the data the user entered in the input box
 function getData(){
     let userInput = document.getElementById("userInput").value
-    
-    let userIncome = Number(userInput)
-    let hourlyRate = userIncome / (12 * 4 * 40)
-    let taxesOwed = calculateTaxes(userIncome,maxIncomes)
+    // Find out whether the user is entering a annual salary or hourly rate
+    let annual = 0
+    let hourly = 0
+    if(incomeType.value === "hourly"){
+        hourly = Number(userInput)
+        annual = hourly * 2080
+    }
+    else{
+        annual = Number(userInput)
+        hourly = annual / 2080
+    }
+    //let userIncome = Number(userInput)
+    //let hourlyRate = userIncome / 2080 // 2080 hrs = (40hrs/1wk) * (52wk/12mth) * 12mth...52wk = 1yr and 12mth = 1yr -> conversion from wks to mth = 52wk/12mth
+    // hourlyRate assumes that the user works 40 hrs work weeks, and worked every week
+    let taxesOwed = calculateTaxes(annual,maxIncomes)
     createDataDiv()
-    displayDataToHTML(userIncome,hourlyRate,taxesOwed)
-    //let netMonthlyIncome = (userIncome-taxesOwed) / 12
+    displayDataToHTML(annual,hourly,taxesOwed)
     
-    
-    //alert(`Gross Income: ${userIncome.toFixed(2)}\nHourly Rate: ${hourlyRate.toFixed(2)}\nTaxes owed: ${taxesOwed.toFixed(2)}\nNet Income: ${(userIncome-taxesOwed).toFixed(2)}\nNet Monthly Income: ${netMonthlyIncome.toFixed(2)}`)
 }
