@@ -1,13 +1,31 @@
 // Tax rates (%) at each Income bracket
 const taxRates = [0.10,0.12,0.22,0.24,0.32,0.35,0.37]
 // The maximum incomes at each Income bracket
-const maxIncomes = [10275,41775,89075,170050,215950,539900]
+const singleFiler = [10275,41775,89075,170050,215950,539900]
+const marriedSeparate = [10275,41775,89075,170050,215950,323925]
+const marriedJointly = [20550,83550,178150,340100,431900,647850]
+const headOfHousehold = [14650,55900,89050,170050,215950,539900]
 
 let mainElement = document.getElementById("main")
 //let userInput = document.getElementById("userInput").value
 let button = document.getElementById("submitBtn")
 
 let incomeType = document.getElementById("incomeType")
+
+let inputVal = document.getElementById("userInput")
+
+// Add event listener to input tag to prevent negative inputs
+inputVal.onkeydown = function(e){
+    // Following code only allows the user to input the numbers on the number line, the numbers on the number pad and backspace keys
+    // Prevents the user from entering negative and alphabetical inputs. But input type="number" already prevents alphabetic characters
+    // code provided by:
+    // https://qawithexperts.com/questions/373/prevent-negative-value-from-being-entered-in-html-input-type#:~:text=Prevent%20negative%20value%20from%20being%20entered%20in%20HTML%20input%20type%20number%20field%3F,-While%20creating%20HTML5&text=Here%20is%20the%20full%20fiddle%20example.&text=You%20can%20also%20use%20onKeyup,convert%20negative%20number%20into%20positive.
+    if(!((e.keyCode > 95 && e.keyCode < 106)
+      || (e.keyCode > 47 && e.keyCode < 58) 
+      || e.keyCode == 8)) {
+        return false;
+    }
+}
 
 // Add event listener to select tag
 incomeType.addEventListener('change',changeIncomeType)
@@ -89,25 +107,60 @@ function displayDataToHTML(grossIncome,hourlyRate,taxOwed){
     pTagNetMonthly.innerHTML = `Net Monthly Income: $${((grossIncome - taxOwed) / 12).toFixed(2)}`
 }
 
+// Function to display error message
+function printErrorMessageToHTML(){
+    let displayDiv = document.getElementById("data")
+    let pTagErr = document.createElement("p")
+    displayDiv.appendChild(pTagErr)
+    pTagErr.innerHTML = `Please enter a positive number`
+}
+
+// checks whether the user entered a positive number, if they didn't it displays an error message
+function isNegativeInput(uInput){
+    let num = Number(uInput)
+    if(num < 0){
+        return true
+    }
+    return false
+}
 // Function to get the data the user entered in the input box
 function getData(){
     let userInput = document.getElementById("userInput").value
-    // Find out whether the user is entering a annual salary or hourly rate
-    let annual = 0
-    let hourly = 0
-    if(incomeType.value === "hourly"){
-        hourly = Number(userInput)
-        annual = hourly * 2080
+    if(isNegativeInput(userInput)){
+        // print error message
+        createDataDiv()
+        printErrorMessageToHTML()
     }
     else{
-        annual = Number(userInput)
-        hourly = annual / 2080
+        // Find out whether the user is entering a annual salary or hourly rate
+        let annual = 0
+        let hourly = 0
+        if(incomeType.value === "hourly"){
+            hourly = Number(userInput)
+            annual = hourly * 2080
+        }
+        else{
+            annual = Number(userInput)
+            hourly = annual / 2080
+        }
+        // 2080 hrs = (40hrs/1wk) * (52wk/12mth) * 12mth...52wk = 1yr and 12mth = 1yr -> conversion from wks to mth = 52wk/12mth
+        // hourlyRate assumes that the user works 40 hrs work weeks, and worked every week
+        // Send the correct income bracket to the calculate taxes function
+        let taxesOwed = 0
+        let filingStatus = document.getElementById("filerStatus").value
+        if(filingStatus === "marriedJointly"){
+            taxesOwed = calculateTaxes(annual,marriedJointly)
+        }
+        else if(filingStatus === "marriedSeparate"){
+            taxesOwed = calculateTaxes(annual,marriedSeparate)
+        }
+        else if(filingStatus === "headOfHousehold"){
+            taxesOwed = calculateTaxes(annual,headOfHousehold)
+        }
+        else{
+            taxesOwed = calculateTaxes(annual,singleFiler)
+        }
+        createDataDiv()
+        displayDataToHTML(annual,hourly,taxesOwed)
     }
-    //let userIncome = Number(userInput)
-    //let hourlyRate = userIncome / 2080 // 2080 hrs = (40hrs/1wk) * (52wk/12mth) * 12mth...52wk = 1yr and 12mth = 1yr -> conversion from wks to mth = 52wk/12mth
-    // hourlyRate assumes that the user works 40 hrs work weeks, and worked every week
-    let taxesOwed = calculateTaxes(annual,maxIncomes)
-    createDataDiv()
-    displayDataToHTML(annual,hourly,taxesOwed)
-    
 }
