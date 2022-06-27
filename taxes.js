@@ -22,9 +22,14 @@ inputVal.onkeydown = function(e){
     // https://qawithexperts.com/questions/373/prevent-negative-value-from-being-entered-in-html-input-type#:~:text=Prevent%20negative%20value%20from%20being%20entered%20in%20HTML%20input%20type%20number%20field%3F,-While%20creating%20HTML5&text=Here%20is%20the%20full%20fiddle%20example.&text=You%20can%20also%20use%20onKeyup,convert%20negative%20number%20into%20positive.
     if(!((e.keyCode > 95 && e.keyCode < 106)
       || (e.keyCode > 47 && e.keyCode < 58) 
-      || e.keyCode == 8)) {
+      || e.keyCode == 8
+      || e.keyCode == 190
+      || e.keyCode == 110)) {
         return false;
     }
+    // I added the last two statements to allow for decimal numbers (floats)
+    // 190 = period on regular keyboard
+    // 110 = period on num pad
 }
 
 // Add event listener to select tag
@@ -112,13 +117,13 @@ function printErrorMessageToHTML(){
     let displayDiv = document.getElementById("data")
     let pTagErr = document.createElement("p")
     displayDiv.appendChild(pTagErr)
-    pTagErr.innerHTML = `Please enter a positive number`
+    pTagErr.innerHTML = `Please enter a valid positive number`
 }
 
 // checks whether the user entered a positive number, if they didn't it displays an error message
-function isNegativeInput(uInput){
+function inputError(uInput){
     let num = Number(uInput)
-    if(num < 0){
+    if(num === NaN || num <= 0){
         return true
     }
     return false
@@ -126,7 +131,7 @@ function isNegativeInput(uInput){
 // Function to get the data the user entered in the input box
 function getData(){
     let userInput = document.getElementById("userInput").value
-    if(isNegativeInput(userInput)){
+    if(inputError(userInput)){
         // print error message
         createDataDiv()
         printErrorMessageToHTML()
